@@ -1,0 +1,34 @@
+N-sample v0.1
+Author: Michael D. Schneider
+
+Code to add new large-scale Fourier mode realizations to an N-body simulation that 
+was run without any large-scale power.
+
+This version is not intended to readily compile on other systems, but matches the code version used 
+for the publication below.
+
+
+Please cite the following paper in any publications resulting from use of this code:
+M. D. Schneider, S. Cole, C. S. Frenk, and I. Szapudi, “Fast generation of ensembles of cosmological N-body simulations via mode-resampling,” arXiv, 2011.
+http://arxiv.org/abs/1103.2767
+
+
+See the LICENSE file for terms of use and redistribution of the source code and documentation.
+
+
+Dependencies (must be separately downloaded):
+
+- FFTW (http://www.fftw.org/)
+v2.1.5 is required for the MPI functionality.  For serial runs, FFTW v3.2.2 is also supported.
+If the compiler flags -DFFTW and -DMPI are both omitted then the code will compile with 
+FFT from the Sun Performance Library.  The routines in fft_nsample.f90 need to be changed 
+for other FFT options in this case.
+
+- FITPACK (http://www.netlib.org/fitpack/index.html)
+Compile without the flag -DFITPACK to remove this dependency.  Log-linear interpolation of the 
+theory power spectrum is used instead of splines in this case.
+Interface blocks for the necessary FITPACK routines are included io_nsample.f90 in this package.
+
+- read_millennium Routines by John Helly, ICC Durham.  These routines are not publicly available 
+so the user of this software will need to replace the functionality for reading their own
+N-body snapshot files.

@@ -1,0 +1,86 @@
+# ============================================================
+# Make instructions for N-sample
+#
+# This file contains machine-dependent make variables for:
+#  CHARON
+# ============================================================
+# Define hostname variable for appending to executables created on this machine
+HOSTNAME = charon
+
+# --------------------------- fortran compiler
+F95ROOT = /gpfs/COSMA/openmpi/intel_11.1/1.4.3
+FC      = $(F95ROOT)/bin/mpif90
+CC      = $(F95ROOT)/bin/mpicc
+
+# debug
+FDEBUG    = -cpp -g -m64 -i4 -I$(F95ROOT)/include/intel64/ilp64 \
+-check bounds -debug-parameters -fpconstant -traceback -align records
+# optimised
+FOPTIMIZED = -fast -cpp -m64 -i4 -I$(F95ROOT)/include/intel64/ilp64 \
+-fpconstant
+# --------------------------- fortran compiler
+
+USEMPI="no"
+USEFITPACK="no"
+
+# --------------------------- libraries and includes
+# see also /gpfs/COSMA/intel/compilers/11.1.073/mkl/tools/environment/mklvarsem64t.sh
+
+MKLROOT = /gpfs/COSMA/intel/compilers/11.1.073/mkl
+
+INCLUDE = $(MKLROOT)/include
+
+LD_LIBRARY_PATH = $(MKLROOT)/lib/em64t
+
+LIBRARY_PATH = $(MKLROOT)/lib/em64t
+
+CPATH = $(MKLROOT)/include
+
+FPATH = $(MKLROOT)/include
+
+NLSPATH = $(MKLROOT)/lib/em64t/locale/en_US
+
+MATHLIB = -L$(MKLROOT)/lib/em64t/ -lmkl_lapack95_ilp64  -Wl,--start-group \
+$(MKLROOT)/lib/em64t/libmkl_intel_ilp64.a \
+$(MKLROOT)/lib/em64t/libmkl_intel_thread.a \
+$(MKLROOT)/lib/em64t/libmkl_core.a \
+$(MKLROOT)/lib/em64t/libmkl_blacs_intelmpi_ilp64.a -Wl,--end-group -openmp -lpthread
+
+# FFTW
+ifeq ($(USEMPI),"no")
+FFTW_LIB = -lfftw3
+endif
+
+# HDF5
+HDF5_LIB = -lhdf5 -lhdf5_fortran -lhdfwrapper
+# --------------------------- libraries and includes
+
+# --------------------------- options for preprocessor
+#OPTIONS   += -DVERBOSE
+
+# Turn on if using FFTW v3+ 
+#OPTIONS   += -DFFTW 
+
+# Correct power spectrum estimates for CIC interpolation of density?
+OPTIONS   += -DCIC
+
+#OPTIONS   += -DSCDM
+
+# Apply Zel'dovich moves when performing the resampling?  
+# When off, will only use time perturbation.
+OPTIONS   += -DZELDOVICH
+
+# Use splines instead of log-linear interpolation of theory power spectrum?
+ifeq ($(USEFITPACK),"yes")
+OPTIONS   += -DFITPACK
+endif
+
+# theory power spectrum is equally spaced in log(k)
+OPTIONS += -DPK_LOGK
+
+ifeq ($(USEMPI),"yes")
+OPTIONS   += -DMPI
+endif
+
+# --------------------------- options for preprocessor
+
